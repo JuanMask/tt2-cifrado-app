@@ -1,0 +1,69 @@
+{
+    "./Archivos de prueba/curp_prueba.txt": {
+        ":p:1:pr:2": {
+            "CLASIFICADORES": [
+                "DSU",
+                "DPI",
+                "NO_DSNU",
+                "DP",
+                "IS"
+            ],
+            "TEXTO*1": "B9T4RegRDxzlb4DMyeHsMGzK",
+            "CURP*2": [
+                "TU+5EVG81Ea1DLIO203r204O"
+            ]
+        },
+        ":p:1:pr:8": {
+            "CLASIFICADORES": [
+                "DSU",
+                "DPI",
+                "NI",
+                "DP",
+                "IS"
+            ],
+            "TEXTO*3": "T+Xp8cNlhNarUYh+k63r",
+            "TARJETA*4": [
+                "7yxO2myFbZxSzBbtiUdj"
+            ]
+        },
+        ":p:1:pr:13": {
+            "CLASIFICADORES": [
+                "DSU",
+                "DPI",
+                "NO_DSNU",
+                "DP",
+                "IS"
+            ],
+            "TEXTO*5": "dwCP0Lt+CDQcVfcQIEjpMJia",
+            "CURP*6": [
+                "bJAYl+2LrtIZEkJNpGpM0eIB"
+            ]
+        },
+        ":p:1:pr:19": {
+            "CLASIFICADORES": [
+                "DSU",
+                "DPI",
+                "IS",
+                "DP",
+                "IS"
+            ],
+            "TEXTO*7": "9OEOnBBxq2Jy17P5AlHr",
+            "TARJETA*8": [
+                "NcKfcQiKYw30TYQBr6yX"
+            ]
+        },
+        ":p:1:pr:23": {
+            "TEXTO": "LIC. ADÁN AUGUSTO LÓPEZ HERNÁNDEZ",
+            "NOMBRES": [
+                "Adán Augusto López"
+            ],
+            "CLASIFICADORES": [
+                "NO_DSU",
+                "DPI",
+                "NO_DSNU",
+                "DP",
+                "IP"
+            ]
+        }
+    }
+}

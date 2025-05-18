@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herramienta de Cifrado/Descifrado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .container {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        select, input[type="file"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .password-requirements {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 15px 0;
+            display: none;
+        }
+        .password-requirements ul {
+            margin: 5px 0 0 20px;
+            padding: 0;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .hidden {
+            display: none;
+        }
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+        .alert-error {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+        .alert-success a {
+            display: inline-block;
+            background-color: #5cb85c;
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        .alert-success a:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HERRAMIENTA DE CIFRADO/DESCIFRADO</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+                        {{ message|safe }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="operation">Operación:</label>
+                <select id="operation" name="operation" onchange="toggleOperation()" required>
+                    <option value="">Seleccione una opción</option>
+                    <option value="encrypt">CIFRADO</option>
+                    <option value="decrypt">DESCIFRADO</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="service">Servicio:</label>
+                <select id="service" name="service">
+                    <option value="escom">ESCOM</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="encryptOptions">
+                <label for="encryptType">Tipo de cifrado:</label>
+                <select id="encryptType" name="encryptType" onchange="toggleFileUpload()">
+                    <option value="full">CIFRAR TODOS LOS ARCHIVOS</option>
+                    <option value="partial">CIFRAR SOLO PARTES SENSIBLES DEL JSON</option>
+                    <option value="json_only">CIFRAR SOLAMENTE ARCHIVOS JSON</option>
+                </select>
+            </div>
+            
+            <div class="form-group hidden" id="decryptOptions">
+                <label for="decryptType">Tipo de descifrado:</label>
+                <select id="decryptType" name="decryptType" onchange="toggleDecryptOptions()">
+                    <option value="full">DESCIFRAR TODOS LOS ARCHIVOS</option>
+                    <option value="partial">DESCIFRAR SOLO PARTES SENSIBLES DEL JSON</option>
+                    <option value="json_only">DESCIFRAR SOLAMENTE ARCHIVOS JSON</option>
+                </select>
+            </div>
+            
+            <div class="password-requirements" id="passwordRequirements">
+                <strong>[🔐] Requisitos para la contraseña:</strong>
+                <ul>
+                    <li>Al menos 8 caracteres</li>
+                    <li>Debe incluir: letras mayúsculas, minúsculas, números y caracteres especiales (! @ # $ %)</li>
+                    <li>No debe ser una contraseña común (ej: 123456, password)</li>
+                </ul>
+            </div>
+            
+            <div class="form-group" id="fileUploadGroup">
+                <label for="files">Archivos a procesar:</label>
+                <input type="file" id="files" name="files" multiple>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
+            </div>
+            
+            <button type="submit">ENVIAR</button>
+        </form>
+    </div>
+
+    <script>
+       function toggleFileUpload() {
+        const encryptType = document.getElementById('encryptType').value;
+        const fileInput = document.getElementById('files');
+        
+        if (encryptType === 'json_only') {
+            fileInput.accept = '.json';
+        } else {
+            fileInput.accept = '';
+        }
+    }
+        
+       /*  function toggleDecryptOptions() {
+            const decryptType = document.getElementById('decryptType').value;
+            const fileUploadGroup = document.getElementById('fileUploadGroup');
+            
+            if (decryptType === 'json_only') {
+                fileUploadGroup.style.display = 'none';
+            } else {
+                fileUploadGroup.style.display = 'block';
+            }
+        } */
+        
+       function toggleOperation() {
+        const operation = document.getElementById('operation').value;
+        const encryptOptions = document.getElementById('encryptOptions');
+        const decryptOptions = document.getElementById('decryptOptions');
+        const passwordRequirements = document.getElementById('passwordRequirements');
+        const fileUploadGroup = document.getElementById('fileUploadGroup');
+        
+        if (operation === 'encrypt') {
+            // Mostrar opciones de cifrado
+            encryptOptions.classList.remove('hidden');
+            decryptOptions.classList.add('hidden');
+            passwordRequirements.style.display = 'block';
+            fileUploadGroup.style.display = 'block';
+            toggleFileUpload();
+        } else if (operation === 'decrypt') {
+            // Mostrar opciones de descifrado y OCULTAR SIEMPRE el campo de archivos
+            encryptOptions.classList.add('hidden');
+            decryptOptions.classList.remove('hidden');
+            passwordRequirements.style.display = 'none';
+            fileUploadGroup.style.display = 'none'; // Siempre oculto en descifrado
+        } else {
+            // Caso por defecto (ninguna opción seleccionada)
+            encryptOptions.classList.add('hidden');
+            decryptOptions.classList.add('hidden');
+            passwordRequirements.style.display = 'none';
+            fileUploadGroup.style.display = 'block';
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', toggleOperation);
+    </script>
+</body>
+</html>
